@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生界面 - 教师教学评价系统</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="header">
+    <h2>学生界面</h2>
+    <button class="button" id="logout">退出登录</button>
+</div>
+<div class="content">
+    <h3>评价教师</h3>
+    <form id="evaluationForm">
+        <label for="teacher">选择教师：</label>
+        <select id="teacher" required>
+            <option value="">请选择</option>
+        </select>
+        <label for="score">评分：</label>
+        <input type="number" id="score" min="1" max="10" required>
+        <button type="submit" class="button">提交评价</button>
+    </form>
+</div>
+<script src="js/student.js"></script>
+</body>
+</html>
