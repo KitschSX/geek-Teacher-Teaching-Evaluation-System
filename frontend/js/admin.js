@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    fetch('http://127.0.0.1:4523/m1/5341581-5012519-default/teachers')
+    fetch('http://localhost:3000/teachers')
         .then(response => response.json())
         .then(data => {
             const teacherList = document.getElementById('teacherList');
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
 document.getElementById('addTeacher').addEventListener('click', function () {
     const newTeacher = prompt('请输入新教师姓名');
     if (newTeacher) {
-        fetch('http://127.0.0.1:4523/m1/5341581-5012519-default/teachers', {
+        fetch('http://localhost:3000/teachers', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    fetch('http://127.0.0.1:4523/m1/5341581-5012519-default/teachers')
+    fetch('http://localhost:3000/teachers')
         .then(response => response.json())
         .then(data => {
             const teacherSelect = document.getElementById('teacher');
@@ -20,7 +20,7 @@ document.getElementById('evaluationForm').addEventListener('submit', function (e
     const teacherId = document.getElementById('teacher').value;
     const score = document.getElementById('score').value;
 
-    fetch('http://127.0.0.1:4523/m1/5341581-5012519-default/evaluate', {
+    fetch('http://localhost:3000/evaluate', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

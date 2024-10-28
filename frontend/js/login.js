@@ -3,8 +3,7 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
 
-    // 发送登录请求到 Apifox 模拟后端
-    fetch('http://127.0.0.1:4523/m1/5341581-5012519-default/login', {
+    fetch('http://localhost:3000/users/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -13,9 +12,9 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
     })
         .then(response => response.json())
         .then(data => {
-            if (data.status === 'success') {
+            console.log(data)
+            if (data.code === '200') {
                 localStorage.setItem('jwtToken', data.token);
-
                 if (data.role === 'admin') {
                     window.location.href = 'admin.html';
                 } else if (data.role === 'student') {

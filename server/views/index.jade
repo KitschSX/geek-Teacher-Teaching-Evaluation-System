@@ -1,0 +1,22 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome to #{title}
+  p
+  a(class={active: currentUrl === '/'} href='users/queryAll')     数据查询
+
+  p
+  a(class={active: currentUrl === '/'} href='users/query?id=1')     定向查询
+
+  p
+  a(class={active: currentUrl === '/'} href='users/addUser?name=xyz&age=18')    数据插入
+
+  p
+  a(class={active: currentUrl === '/'} href='users')   数据更新
+
+  p
+  a(class={active: currentUrl === '/'} href='users/deleteUser?id=0')    数据删除
+
+  p
+  a(class={active: currentUrl === '/'} href='users/login?name=xyz&pwd=18')    登录
