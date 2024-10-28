@@ -45,4 +45,15 @@ router.post('/evaluate',function(req,res,next){
 		code: '200'
 	});
 })
+router.get('/evaluations',function(req,res,next){
+	res.json({
+		code: '200',
+		evaluations: [{
+			method: 'input',
+			name: 'txt',
+			title:'对老师的评价',
+			placeholder:'在这里填写评价内容'
+		}]
+	});
+})
 module.exports = router;

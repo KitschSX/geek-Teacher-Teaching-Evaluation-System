@@ -22,7 +22,7 @@ h1, h2 {
 }
 
 input, select {
-    width: 90%;
+    width: 60%;
     padding: 10px;
     margin: 10px 0;
     border: 1px solid #ccc;
@@ -66,4 +66,24 @@ ul {
 
 li {
     padding: 5px 0;
+}
+
+.flex-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ct-star {
+    display: inline-block;
+    
+    margin: 0 1px;
+    width: 19px;
+    height: 19px;
+    background: url(img/stars.png) no-repeat;
+    vertical-align: -2px;
+    cursor: pointer;
+}
+.ic-star-off {
+    background-position: -39px 0;
 }
