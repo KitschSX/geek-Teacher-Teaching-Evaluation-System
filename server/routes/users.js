@@ -33,4 +33,16 @@ router.post('/updateUser', function(req, res, next) {
 router.post('/login', function(req, res, next) {
 	userDao.login(req, res, next);
 });
+
+router.get('/teachers',function(req,res,next){
+	res.json({
+		teachers:[{name:'王老师', id: '12'},{name:'李老师', id: '13'}],
+		code: '200'
+	});
+})
+router.post('/evaluate',function(req,res,next){
+	res.json({
+		code: '200'
+	});
+})
 module.exports = router;

@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    fetch('http://localhost:3000/teachers')
+    fetch('http://localhost:3000/users/teachers')
         .then(response => response.json())
         .then(data => {
             const teacherSelect = document.getElementById('teacher');
@@ -16,11 +16,12 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 document.getElementById('evaluationForm').addEventListener('submit', function (event) {
+    
     event.preventDefault();
     const teacherId = document.getElementById('teacher').value;
     const score = document.getElementById('score').value;
 
-    fetch('http://localhost:3000/evaluate', {
+    fetch('http://localhost:3000/users/evaluate', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -29,7 +30,8 @@ document.getElementById('evaluationForm').addEventListener('submit', function (e
     })
         .then(response => response.json())
         .then(data => {
-            if (data.status === 'success') {
+            console.log(data.code)
+            if (data.code === '200') {
                 alert('评价提交成功！');
                 document.getElementById('evaluationForm').reset();
             } else {
