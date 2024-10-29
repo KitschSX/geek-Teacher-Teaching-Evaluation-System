@@ -5,15 +5,16 @@ export function useEvaluation(data){
       <label for="${data.name}">${data.title}</label>
       <input type="text" class="form-control" id="${data.name}" placeholder="${data.placeholder}">
     </div>`
-  } else if(data.method === 'score'){
+  } else if(data.method === 'score'){//根据获取到的option数组动态生成标签和内容
+    let res = ``;
+    console.log('score')
+    data.options.forEach((option, index) => {
+      res += `<option value="${option}">${option}</option>`
+    })
     return `<div class="form-group">
       <label for="${data.name}">${data.title}</label>
       <select class="form-control" id="${data.name}">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
+        `+ res +`
       </select>
     </div>`
   } else if(data.method === 'radio'){

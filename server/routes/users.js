@@ -50,9 +50,29 @@ router.get('/evaluations',function(req,res,next){
 		code: '200',
 		evaluations: [{
 			method: 'input',
-			name: 'txt',
-			title:'对老师的评价',
+			name: 'input',
+			title:'对老师的评价1',
 			placeholder:'在这里填写评价内容'
+		},{
+			method: 'score',
+			name: 'score',
+			title:'对老师的评价2',
+			options:['非常满意','满意','不满意']
+		},{
+			method: 'radio',
+			name: 'radio',
+			title:'对老师的评价3',
+			options:['非常满意','满意','不满意']
+		}, {
+			method: 'checkbox',
+			name: 'checkbox',
+			title:'对老师的评价4',
+			options:['非常满意','满意','不满意']
+		}, {
+			method: 'select',
+			name: 'select',
+			title:'对老师的评价5',
+			options:['非常满意','满意','不满意']
 		}]
 	});
 })
