@@ -24,6 +24,11 @@ var menuData = [
 		title: "评价结果查看",
 		url: "./html/manager/teacherManageData.html",
 	},
+	{
+		id: "menu6",
+		title: "密码修改",
+		url: "./html/manager/pwd.html",
+	},
 ];
 
 // 获取渲染菜单和内容区域元素

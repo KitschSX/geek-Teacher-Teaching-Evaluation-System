@@ -63,3 +63,6 @@ iframe {
   width: 100%;
   height: 80vh;
 }
+.selected {
+  color: #56481e;
+}
