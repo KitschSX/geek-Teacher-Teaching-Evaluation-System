@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      font-size: 20px;
+    }
+
+    th,
+    td {
+      border: 1px solid #ccc;
+      padding: 5px;
+      width: 30%;
+    }
+  </style>
+  </style>
+</head>
+
+<body>
+  <h2>老师管理</h2>
+  <div id="table"></div>
+</body>
+<script>
+  var data = {
+    tableHeader: { '姓名': 'name', '性别': 'gender', '年龄': 'age' },
+    data: [
+      { id: 1001, name: "张三13", gender: "男", age: '20' },
+      { id: 1002, name: "李四1", gender: "女", age: '11' },
+      { id: 1003, name: "张三2", gender: "男", age: '16' },
+      { id: 1004, name: "李四2", gender: "女", age: '18' },
+      { id: 1005, name: "张三3", gender: "男", age: '14' },
+      { id: 1006, name: "李四3", gender: "女", age: '18' },
+      { id: 1007, name: "张三4", gender: "男", age: '21' },
+      { id: 1008, name: "李四5", gender: "女", age: '18' },
+    ],
+  }
+  function initTable() {
+    var tableHtml = "<table><thead><tr>";
+    for (var j in data.tableHeader) {
+      tableHtml += "<th>" + j + "</th>";
+    }
+    
+
+    tableHtml += "</tr></thead>";
+    tableHtml += "</tr></thead><tbody>";
+    tableHtml +="<tr>"
+    for(var i in data.tableHeader){
+      tableHtml += `<td contenteditable='true' dataId=${data.tableHeader[i]}></td>`
+    }
+    tableHtml += `<td><button onclick='create(this)'}>添加</button></td>`;
+    tableHtml += "</tr>"
+    for (var i = 0; i < data.data.length; i++) {
+      tableHtml += "<tr>";
+      for (var j in data.data[i]) {
+        if (j == 'id') {
+          continue;
+        }
+        tableHtml += `<td idx=${data.data[i]['id']} dataId=${j} ondblclick="editCell(this)">` + data.data[i][j] + "</td>";
+      }
+      tableHtml += `<td><button onclick='remove(this)' idx=${data.data[i]['id']}>删除</button></td>`;
+      tableHtml += "</tr>";
+    }
+    tableHtml += "</tbody></table>";
+    document.getElementById("table").innerHTML = tableHtml;
+  }
+  
+  function editCell(cell) {
+    let originalContent = cell.innerHTML;
+    cell.innerHTML = `<input type="text" value="${originalContent}" onblur="saveCell(this)">`;
+    cell.firstChild.focus();
+  }
+  
+  function saveCell(input) {
+    let newValue = input.value;
+    let cell = input.parentElement;
+    cell.innerHTML = newValue;
+    let dataId = cell.getAttribute('dataId');
+    let rowIdx = cell.parentElement.rowIndex - 1;
+    data.data[rowIdx][dataId] = newValue;
+    console.log(data);
+  }
+  
+  initTable();
+  function remove(btn) {
+    let idx = btn.getAttribute('idx');
+    data.data = data.data.filter(item => item.id != idx);
+    initTable();
+  }
+  function create(btn) {
+    //获取表单第一行数据
+    let row = btn.parentElement.parentElement;
+    console.log(row)
+    let rowData = {};
+    for (let i = 0; i < row.children.length - 1; i++) {
+      let cell = row.children[i];
+      let dataId = cell.getAttribute('dataId');
+      let cellValue = cell.innerHTML;
+      if (cellValue == '') {
+        alert('请输入数据');
+        return;
+      }
+      rowData[dataId] = cellValue;
+    }
+    rowData.id = data.data.length + 1001;
+    console.log(rowData)
+    data.data.push(rowData);
+    initTable();
+  }
+</script>
+
+</html>
