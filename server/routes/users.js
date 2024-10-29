@@ -51,23 +51,23 @@ router.get('/evaluations',function(req,res,next){
 		evaluations: [{
 			method: 'input',
 			name: 'input',
-			title:'对老师的评价1',
+			title:'对老师的评价',
 			placeholder:'在这里填写评价内容'
 		},{
 			method: 'score',
 			name: 'score',
-			title:'对老师的评价2',
-			options:['非常满意','满意','不满意']
+			title:'老师的授课态度',
+			options:['非常认真','认真','一般认真']
 		},{
 			method: 'radio',
 			name: 'radio',
-			title:'对老师的评价3',
+			title:'课题设计质量',
 			options:['非常满意','满意','不满意']
 		}, {
 			method: 'checkbox',
 			name: 'checkbox',
-			title:'对老师的评价4',
-			options:['非常满意','满意','不满意']
+			title:'感受不错的方面',
+			options:['课题设计','课堂氛围','随堂练习','知识复盘']
 		}, {
 			method: 'select',
 			name: 'select',

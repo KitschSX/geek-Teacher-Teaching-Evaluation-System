@@ -37,17 +37,31 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 document.getElementById('evaluationForm').addEventListener('submit', function (event) {
-
+  //动态获取表单的所有内容统一确认都填写后返回
   event.preventDefault();
-  const teacherId = document.getElementById('teacher').value;
-  const score = document.getElementById('score').value;
+  const evaluationForm = document.getElementById('evaluationForm');
+  let formData = {teacherid: evaluationForm.elements[0].value,formData : []};
+  console.log(evaluationForm)
+  for (let i = 1; i < evaluationForm.elements.length; i++) {
+    const element = evaluationForm.elements[i];
+    if (element.type === 'text' || element.type === 'select-one') {
+      formData.formData.push(element.value);
+    } else if (element.type === 'radio') {
+      if (element.checked) {
+        formData.formData.push(element.value) ;
+      }
+    } else if(element.type === 'checkbox') {
+      console.log(element);
+    }
+  }
+  console.log(formData)
 
   fetch('http://localhost:3000/users/evaluate', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ teacherId, score })
+    body: JSON.stringify(formData)
   })
     .then(response => response.json())
     .then(data => {
@@ -78,7 +92,7 @@ function useEvaluation(data) {
   if (data.method === 'input') {
     return `<div class="form-group">
         <label for="${data.name}">${data.title}</label>
-        <input type="text" class="form-control" id="${data.name}" placeholder="${data.placeholder}">
+        <input type="text" class="form-control" id="${data.name}" placeholder="${data.placeholder}" required>
       </div>`
   } else if (data.method === 'score') {
     let res = ``;
@@ -87,37 +101,55 @@ function useEvaluation(data) {
     })
     return `<div class="form-group">
       <label for="${data.name}">${data.title}</label>
-      <select class="form-control" id="${data.name}">
+      <select class="form-control" id="${data.name}" required>
         `+ res + `
       </select>
     </div>`
   } else if (data.method === 'radio') {
     let res = ``;
     data.options.forEach((option, index) => {
-      res += `<input class="form-check-input" type="radio" name="${data.name}" id="${data.name}-${index + 1}" value="${option}">
+      res += `<input class="form-check-input" type="radio" name="${data.name}" id="${data.name}-${index + 1}" value="${option}" required>
       <label class="form-check-label" for="${data.name}-${index + 1}">${option}</label>
       </input>`
     })
-    return `<div class="form-group">
-        <label for="${data.name}">${data.title}</label>
-        <div class="form-check">
+    return `<div class="form-group flex-box">
+        <label>${data.title}</label>
+        <div class="form-check flex-box form-single">
           `+ res + `
-          </input>
         </div>`
   } else if (data.method === 'checkbox') {
     let res = ``;
     data.options.forEach((option, index) => {
-      res += `<input class="form-check-input" type="checkbox" name="${data.name}" id="${data.name}-${index + 1}" value="${option}">
+      res += `<input class="form-check-input checkbox-input" type="checkbox" name="${data.name}" id="${data.name}-${index + 1}" value="${option}" onclick='deRequire("checkbox-input")' required>
       <label class="form-check-label" for="${data.name}-${index + 1}">${option}</label>
       </input>`
     })
-    return `<div class="form-group">
-        <label for="${data.name}">${data.title}</label>
-        <div class="form-check">
+    return `<div class="form-group flex-box" required>
+        <label>${data.title}</label>
+        <div class="form-check flex-box form-single">
           `+ res + `
-          </input>
         </div>`
   } else {
     return ''
+  }
+}
+
+function deRequire(elClass) {
+  el = document.getElementsByClassName(elClass);
+  var atLeastOneChecked = false; //at least one cb is checked
+  for (i = 0; i < el.length; i++) {
+    if (el[i].checked === true) {
+      atLeastOneChecked = true;
+    }
+  }
+
+  if (atLeastOneChecked === true) {
+    for (i = 0; i < el.length; i++) {
+      el[i].required = false;
+    }
+  } else {
+    for (i = 0; i < el.length; i++) {
+      el[i].required = true;
+    }
   }
 }
