@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      font-size: 20px;
+    }
+
+    th,
+    td {
+      border: 1px solid #ccc;
+      padding: 5px;
+      width: 30%;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>评价结果</h2>
+  <div id="table"></div>
+</body>
+<script>
+  var data = {
+    "teacherid": "12",
+    "teachername": "王老师",
+    "formData": [
+      "非常好",
+      "非常认真",
+      "非常满意",
+      [
+        "课题设计",
+        "课堂氛围",
+        "随堂练习",
+        "知识复盘"
+      ]
+    ],
+    "evaluations": [
+      {
+        "method": "input",
+        "name": "input",
+        "title": "对老师的评价",
+        "placeholder": "在这里填写评价内容"
+      },
+      {
+        "method": "score",
+        "name": "score",
+        "title": "老师的授课态度",
+        "options": [
+          "非常认真",
+          "认真",
+          "一般认真"
+        ]
+      },
+      {
+        "method": "radio",
+        "name": "radio",
+        "title": "课题设计质量",
+        "options": [
+          "非常满意",
+          "满意",
+          "不满意"
+        ]
+      },
+      {
+        "method": "checkbox",
+        "name": "checkbox",
+        "title": "感受不错的方面",
+        "options": [
+          "课题设计",
+          "课堂氛围",
+          "随堂练习",
+          "知识复盘"
+        ]
+      }
+    ]
+  }
+  function initTable() {
+    var tableHtml = `<h3>评价老师：  ${data.teachername}</h3>`
+    tableHtml += "<table><thead><tr>";
+    // for (var j in data.tableHeader) {
+    //   tableHtml += "<th>" + j + "</th>";
+    // }
+    tableHtml += "</tr></thead>";
+    tableHtml += "</tr></thead><tbody>";
+
+    for (var i = 0; i < data.evaluations.length; i++) {
+      tableHtml += "<tr>";
+      tableHtml += `<td>${data.evaluations[i].title}</td><td>${data.formData[i]}</td>`;
+      tableHtml += "</tr>";
+    }
+    tableHtml += "</tbody></table>";
+    document.getElementById("table").innerHTML = tableHtml;
+  }
+
+  initTable();
+</script>
+
+</html>
