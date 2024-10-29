@@ -1,4 +1,5 @@
 
+var evaluations = [];
 document.addEventListener('DOMContentLoaded', function () {
   fetch('http://localhost:3000/users/teachers')
     .then(response => response.json())
@@ -19,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
     .then(data => {
       // 获取所有的评价指标并放入表单内
       const evaluationForm = document.getElementById('evaluationForm');
+      evaluations = data.evaluations;
       data.evaluations.forEach(evaluation => {
         const evaluation1 = useEvaluation(evaluation);
         console.log(stringToHTML(evaluation1))
@@ -40,8 +42,9 @@ document.getElementById('evaluationForm').addEventListener('submit', function (e
   //动态获取表单的所有内容统一确认都填写后返回
   event.preventDefault();
   const evaluationForm = document.getElementById('evaluationForm');
-  let formData = {teacherid: evaluationForm.elements[0].value,formData : []};
+  let formData = {teacherid: evaluationForm.elements[0].value,formData : [],evaluations:evaluations};
   console.log(evaluationForm)
+  let checkBox = [];
   for (let i = 1; i < evaluationForm.elements.length; i++) {
     const element = evaluationForm.elements[i];
     if (element.type === 'text' || element.type === 'select-one') {
@@ -52,8 +55,10 @@ document.getElementById('evaluationForm').addEventListener('submit', function (e
       }
     } else if(element.type === 'checkbox') {
       console.log(element);
+      checkBox.push(element.value);
     }
   }
+  formData.formData.push(checkBox);
   console.log(formData)
 
   fetch('http://localhost:3000/users/evaluate', {
