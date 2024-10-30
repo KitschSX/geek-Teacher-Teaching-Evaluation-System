@@ -96,7 +96,7 @@ var stringToHTML = function (str) {
 function useEvaluation(data) {
   if (data.method === 'input') {
     return `<div class="form-group">
-        <label for="${data.name}">${data.title}</label>
+        <label for="${data.name}" class="from-label">${data.title}</label>
         <input type="text" class="form-control" id="${data.name}" placeholder="${data.placeholder}" required>
       </div>`
   } else if (data.method === 'score') {
@@ -105,7 +105,7 @@ function useEvaluation(data) {
       res += `<option value="${option}">${option}</option>`
     })
     return `<div class="form-group">
-      <label for="${data.name}">${data.title}</label>
+      <label for="${data.name}" class="from-label">${data.title}</label>
       <select class="form-control" id="${data.name}" required>
         `+ res + `
       </select>
@@ -118,7 +118,7 @@ function useEvaluation(data) {
       </input>`
     })
     return `<div class="form-group flex-box">
-        <label>${data.title}</label>
+        <label class="from-label">${data.title}</label>
         <div class="form-check flex-box form-single">
           `+ res + `
         </div>`
@@ -130,7 +130,7 @@ function useEvaluation(data) {
       </input>`
     })
     return `<div class="form-group flex-box" required>
-        <label>${data.title}</label>
+        <label class="from-label">${data.title}</label>
         <div class="form-check flex-box form-single">
           `+ res + `
         </div>`

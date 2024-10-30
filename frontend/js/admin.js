@@ -38,6 +38,7 @@ var mainFrame = document.getElementById("mainFrame");
 
 function createMenuItem(menuItem, isExpanded) {
 	const liElement = document.createElement("li");
+	liElement.classList.add("menu-item"); // 添加类名
  
 	const titleElement = document.createElement("span");
 	titleElement.textContent = menuItem.title;
@@ -57,20 +58,31 @@ function createMenuItem(menuItem, isExpanded) {
 					const otherLiElement = menuSection.querySelector(`li[data-id="${otherMenuItem.id}"]`);
 					const otherUlElement = otherLiElement.querySelector(".submenu");
 					otherUlElement.style.display = "none";
+					otherLiElement.classList.remove("expanded"); // 移除 expanded 类名
+                
 				}
 			}
- 
+			
 			// 切换当前菜单项的展开状态
 			menuItem.expanded = !menuItem.expanded;
  
 			// 根据展开状态设置子菜单的 display 样式
 			const ulElement = liElement.querySelector(".submenu");
 			ulElement.style.display = menuItem.expanded ? "block" : "none";
+			liElement.classList.toggle("expanded");
 		} else {
 			// 如果点击的是没有子菜单的菜单项，则加载对应的URL
 			const url = menuItem.url;
 			if (url) {
 				mainFrame.src = url;
+					mainFrame.classList.add('fade-out');
+					setTimeout(() => {
+						mainFrame.classList.remove('fade-out');
+						mainFrame.classList.add('fade-in');
+							setTimeout(() => {
+								mainFrame.classList.remove('fade-in');
+							}, 200); // 动画持续时间
+					}, 200); // 动画持续时间
 			}
  
 			// 切换选中状态

@@ -8,14 +8,39 @@
   <style>
     table {
       border-collapse: collapse;
-      font-size: 20px;
+      font-size: 16px;
+      margin: 20px auto;
+      width: 80%;
     }
 
     th,
     td {
       border: 1px solid #ccc;
-      padding: 5px;
-      width: 30%;
+      padding: 10px;
+      text-align: center;
+      width: auto;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      color: #333;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    button {
+      padding: 5px 10px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
     }
   </style>
 </head>
@@ -26,60 +51,116 @@
 </body>
 <script>
   var data = {
-    "teacherid": "12",
-    "teachername": "王老师",
-    "formData": [
-      "非常好",
-      "非常认真",
-      "非常满意",
-      [
-        "课题设计",
-        "课堂氛围",
-        "随堂练习",
-        "知识复盘"
-      ]
-    ],
-    "evaluations": [
+    dataList: [
       {
-        "method": "input",
-        "name": "input",
-        "title": "对老师的评价",
-        "placeholder": "在这里填写评价内容"
-      },
-      {
-        "method": "score",
-        "name": "score",
-        "title": "老师的授课态度",
-        "options": [
+        "teacherid": "12",
+        "teachername": "王老师",
+        "formData": [
+          "非常好",
           "非常认真",
-          "认真",
-          "一般认真"
-        ]
-      },
-      {
-        "method": "radio",
-        "name": "radio",
-        "title": "课题设计质量",
-        "options": [
           "非常满意",
-          "满意",
-          "不满意"
+          [
+            "课题设计",
+            "课堂氛围",
+            "随堂练习",
+            "知识复盘"
+          ]
+        ],
+        "evaluations": [
+          {
+            "method": "input",
+            "name": "input",
+            "title": "对老师的评价",
+            "placeholder": "在这里填写评价内容"
+          },
+          {
+            "method": "score",
+            "name": "score",
+            "title": "老师的授课态度",
+            "options": [
+              "非常认真",
+              "认真",
+              "一般认真"
+            ]
+          },
+          {
+            "method": "radio",
+            "name": "radio",
+            "title": "课题设计质量",
+            "options": [
+              "非常满意",
+              "满意",
+              "不满意"
+            ]
+          },
+          {
+            "method": "checkbox",
+            "name": "checkbox",
+            "title": "感受不错的方面",
+            "options": [
+              "课题设计",
+              "课堂氛围",
+              "随堂练习",
+              "知识复盘"
+            ]
+          }
         ]
       },
       {
-        "method": "checkbox",
-        "name": "checkbox",
-        "title": "感受不错的方面",
-        "options": [
-          "课题设计",
-          "课堂氛围",
-          "随堂练习",
-          "知识复盘"
+        "teacherid": "22",
+        "teachername": "张老师",
+        "formData": [
+          "非常好",
+          " 认真",
+          "非常满意",
+          [
+            "课题设计",
+            "课堂氛围",
+            "随堂练习",
+          ]
+        ],
+        "evaluations": [
+          {
+            "method": "input",
+            "name": "input",
+            "title": "对老师的评价",
+            "placeholder": "在这里填写评价内容"
+          },
+          {
+            "method": "score",
+            "name": "score",
+            "title": "老师的授课态度",
+            "options": [
+              "非常认真",
+              "认真",
+              "一般认真"
+            ]
+          },
+          {
+            "method": "radio",
+            "name": "radio",
+            "title": "课题设计质量",
+            "options": [
+              "非常满意",
+              "满意",
+              "不满意"
+            ]
+          },
+          {
+            "method": "checkbox",
+            "name": "checkbox",
+            "title": "感受不错的方面",
+            "options": [
+              "课题设计",
+              "课堂氛围",
+              "随堂练习",
+              "知识复盘"
+            ]
+          }
         ]
-      }
-    ]
+      }]
   }
-  function initTable() {
+  function initTable(data) {
     var tableHtml = `<h3>评价老师：  ${data.teachername}</h3>`
     tableHtml += "<table><thead><tr>";
     // for (var j in data.tableHeader) {
@@ -94,10 +175,12 @@
       tableHtml += "</tr>";
     }
     tableHtml += "</tbody></table>";
-    document.getElementById("table").innerHTML = tableHtml;
+    document.getElementById("table").innerHTML += tableHtml;
   }
 
-  initTable();
+  for(const i of data.dataList){
+    initTable(i);
+  }
 </script>
 
 </html>

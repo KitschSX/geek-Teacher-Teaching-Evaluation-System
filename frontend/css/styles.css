@@ -5,6 +5,7 @@ body {
     margin: 0;
     padding: 0;
     text-align: center;
+    
 }
 
 .container, .login-container, .content {
@@ -16,9 +17,11 @@ body {
     border-radius: 16px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
-
+.login-container{
+    max-width: 500px;
+}
 h1, h2 {
-    color: #333;
+    color: #a28351;
 }
 
 input, select {
@@ -68,7 +71,7 @@ li {
     padding: 5px 0;
 }
 
-.flex-box {
+.flex-box  {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -93,4 +96,56 @@ li {
 }
 .ic-star-off {
     background-position: -39px 0;
+}
+
+.from-label {
+    display: inline-block;
+    width: 18%;
+}
+
+
+@-webkit-keyframes FADEY {
+    0%   { opacity: 0; transform: translateY(50px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes FADEY {
+    0%   { opacity: 0; transform: translateY(50px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+@-webkit-keyframes FADEY1 {
+    0%   { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes FADEY1 {
+    0%   { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+.intro { 
+    -webkit-animation-name: FADEY1;
+    animation-name: FADEY1;
+    -webkit-animation-duration: 1s; 
+    animation-duration: 1s; 
+    -webkit-animation-timing-function: ease-in-out; 
+    animation-timing-function: ease-in-out; 
+    -webkit-animation-iteration-count: 1;
+    animation-iteration-count: 1;
+}
+
+.design-selection, .design-archives {
+    opacity: 0;
+    -webkit-opacity: 0;
+    animation-name: FADEY;
+    -webkit-animation-name: FADEY;
+    animation-duration: 1s; 
+    -webkit-animation-duration: 1s; 
+    animation-timing-function: ease-in-out; 
+    -webkit-animation-timing-function: ease-in-out; 
+    animation-delay: 1s;
+    -webkit-animation-delay: 1s;
+    animation-fill-mode: forwards;
+    -webkit-animation-fill-mode: forwards;
+    animation-iteration-count: 1;
+    -webkit-animation-iteration-count: 1;
 }

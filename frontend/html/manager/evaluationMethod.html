@@ -8,17 +8,58 @@
   <style>
     table {
       border-collapse: collapse;
-      font-size: 20px;
+      font-size: 16px;
+      margin: 20px auto;
+      width: 80%;
     }
 
     th,
     td {
       border: 1px solid #ccc;
-      padding: 5px;
-      width: 30%;
+      padding: 10px;
+      text-align: center;
+      width: auto;
     }
-    
-  </style>
+
+    th {
+      background-color: #f2f2f2;
+      color: #333;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    button {
+      padding: 5px 10px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+
+
+    .editable-cell {
+      padding: 0;
+      height: 100%;
+      box-sizing: border-box;
+      outline: none;
+      text-align: center;
+    }
+    .form-control {
+      
+      width: 100%;
+      width: 100%;
+      
+      text-align: center;
+      border: none;;
+      font-size: 20px;
+    }
   </style>
 </head>
 
@@ -30,57 +71,61 @@
   var data = {
     tableHeader: { '指标类': 'name', '指标名': 'title', '可选项': 'options' },
     data: [{
-			method: 'input',
-			name: 'input',
-			title:'对老师的评价',
-			placeholder:'在这里填写评价内容'
-		},{
-			method: 'score',
-			name: 'score',
-			title:'老师的授课态度',
-			options:['非常认真','认真','一般认真']
-		},{
-			method: 'radio',
-			name: 'radio',
-			title:'课题设计质量',
-			options:['非常满意','满意','不满意']
-		}, {
-			method: 'checkbox',
-			name: 'checkbox',
-			title:'感受不错的方面',
-			options:['课题设计','课堂氛围','随堂练习','知识复盘']
-		}, {
-			method: 'select',
-			name: 'select',
-			title:'对老师的评价5',
-			options:['非常满意','满意','不满意']
-		}]
-  }
+      method: 'input',
+      name: 'input',
+      title: '对老师的评价',
+      placeholder: '在这里填写评价内容'
+    }, {
+      method: 'score',
+      name: 'score',
+      title: '老师的授课态度',
+      options: ['非常认真', '认真', '一般认真']
+    }, {
+      method: 'radio',
+      name: 'radio',
+      title: '课题设计质量',
+      options: ['非常满意', '满意', '不满意']
+    }, {
+      method: 'checkbox',
+      name: 'checkbox',
+      title: '感受不错的方面',
+      options: ['课题设计', '课堂氛围', '随堂练习', '知识复盘']
+    }, {
+      method: 'select',
+      name: 'select',
+      title: '对老师的评价5',
+      options: ['非常满意', '满意', '不满意']
+    }]
+  };
+
   function initTable() {
     var tableHtml = "<table><thead><tr>";
     for (var j in data.tableHeader) {
       tableHtml += "<th>" + j + "</th>";
     }
-    tableHtml += "</tr></thead>";
-    tableHtml += "</tr></thead><tbody>";
-    tableHtml +="<tr>"
-    tableHtml += `<td dataId='name'><select class="form-control" id="method1" required>
+    tableHtml += "<th>操作</th></tr></thead><tbody>";
+
+    // 表单行
+    tableHtml += "<tr>";
+    tableHtml += `<td data-id='name'><select class="form-control" id="method1" required>
         <option value="input">input</option>
         <option value="score">score</option>
         <option value="checkbox">checkbox</option>
         <option value="radio">radio</option>
-      </select></td>`
-    tableHtml += `<td contenteditable='true' dataId='title'></td>`;
-    tableHtml += `<td contenteditable='true' dataId='options'></td>`;
-    tableHtml += `<td><button onclick='create(this)'}>添加</button></td>`;
+      </select></td>`;
+    tableHtml += `<td contenteditable='true' data-id='title' class='editable-cell'></td>`;
+    tableHtml += `<td contenteditable='true' data-id='options' class='editable-cell'></td>`;
+    tableHtml += `<td><button onclick='create(this)'>添加</button></td>`;
     tableHtml += "</tr>";
+
+    // 数据行
     for (var i = 0; i < data.data.length; i++) {
       tableHtml += "<tr>";
       for (var j in data.data[i]) {
         if (j == 'method') {
           continue;
         }
-        tableHtml += `<td idx=${data.data[i]['title']} dataId=${j} ondblclick="editCell(this)">` + data.data[i][j] + "</td>";
+        tableHtml += `<td idx=${data.data[i]['title']} data-id=${j} ondblclick="editCell(this)" class='editable-cell'>` + data.data[i][j] + "</td>";
       }
       tableHtml += `<td><button onclick='remove(this)' idx=${data.data[i]['title']}>删除</button></td>`;
       tableHtml += "</tr>";
@@ -88,51 +133,44 @@
     tableHtml += "</tbody></table>";
     document.getElementById("table").innerHTML = tableHtml;
   }
-  
+
   function editCell(cell) {
-    let originalContent = cell.innerHTML;
-    cell.innerHTML = `<input type="text" value="${originalContent}" onblur="saveCell(this)">`;
-    cell.firstChild.focus();
+    cell.contentEditable = true;
+    cell.classList.add('editable-cell');
+    cell.focus();
   }
-  
-  function saveCell(input) {
-    let newValue = input.value;
-    let cell = input.parentElement;
-    cell.innerHTML = newValue;
-    let dataId = cell.getAttribute('dataId');
-    console.log(dataId)
-    if(dataId!=='input'){
-      let rowIdx = cell.parentElement.rowIndex - 2;
-      newValue = newValue.split(',');
-      console.log(rowIdx, dataId,newValue,data.data);
-      data.data[rowIdx][dataId] = newValue;
-      return
+
+  function saveCell(cell) {
+    cell.contentEditable = false;
+    cell.classList.remove('editable-cell');
+    let newValue = cell.textContent;
+    let dataId = cell.getAttribute('data-id');
+    let rowIdx = cell.parentElement.rowIndex - 2; // 考虑到表单行
+    if (dataId === 'options') {
+      newValue = newValue.split(',').map(option => option.trim());
     }
-    let rowIdx = cell.parentElement.rowIndex - 2;
-    data.data[rowIdx].dataId = newValue;
+    data.data[rowIdx][dataId] = newValue;
     console.log(data);
-    initTable();
   }
-  
-  initTable();
+
   function remove(btn) {
     let idx = btn.getAttribute('idx');
-    data.data = data.data.filter(item => item.title != idx);
+    data.data = data.data.filter(item => item.title !== idx);
     initTable();
   }
+
   function create(btn) {
-    //获取表单第一行数据
     let row = btn.parentElement.parentElement;
-    console.log(row)
     let rowData = {};
     let method1 = document.getElementById('method1').value;
     rowData.method = method1;
     rowData.name = method1;
+
     for (let i = 1; i < row.children.length - 1; i++) {
       let cell = row.children[i];
-      let dataId = cell.getAttribute('dataId');
-      let cellValue = cell.innerHTML;
-      if (cellValue == '') {
+      let dataId = cell.getAttribute('data-id');
+      let cellValue = cell.textContent;
+      if (cellValue === '') {
         alert('请输入数据');
         return;
       }
@@ -141,6 +179,8 @@
     data.data.push(rowData);
     initTable();
   }
+
+  initTable();
 </script>
 
 </html>
