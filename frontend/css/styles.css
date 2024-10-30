@@ -90,7 +90,6 @@ li {
     margin: 0 1px;
     width: 19px;
     height: 19px;
-    background: url(img/stars.png) no-repeat;
     vertical-align: -2px;
     cursor: pointer;
 }

@@ -1,3 +1,6 @@
+body {
+    overflow: hidden;
+}
 .menu-section {
   position: fixed;
   top: 0;
@@ -19,6 +22,7 @@ h3 {
 .page-section {
   margin-left: 175px;
   width: auto;
+    overflow: hidden;
 }
 
 .page-section > header {
