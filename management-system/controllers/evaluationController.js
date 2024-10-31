@@ -34,8 +34,8 @@ exports.deleteMetric = (req, res) => {
 };
 
 exports.submitResult = (req, res) => {
-    const { teacherid, formData } = req.body;
-    db.query('INSERT INTO evaluation_results (teacherid, results) VALUES (?, ?)', [teacherid, JSON.stringify(formData)], (err) => {
+    const { teacherId, formData, evaluations } = req.body;
+    db.query('INSERT INTO evaluation_results (teacherId, results,evaluations) VALUES (?, ?,?)', [teacherId, JSON.stringify(formData),JSON.stringify(evaluations)], (err) => {
         if (err) return res.status(500).json(err);
         res.json({ message: '评价结果提交成功' });
     });
