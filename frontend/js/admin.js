@@ -215,7 +215,7 @@ function initMenu() {
 			} else {
 				liElement.classList.add("expanded");
 				if (hasChildren) {
-					var submenu = liElement.querySelector(".submenu");
+					submenu = liElement.querySelector(".submenu");
 					submenu.style.display = "block";
 					var firstLink = submenu.querySelector("a");
 					if (firstLink) {

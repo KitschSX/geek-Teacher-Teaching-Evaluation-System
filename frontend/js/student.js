@@ -102,7 +102,6 @@ document.getElementById('evaluationForm').addEventListener('submit', function (e
     }
 
     // 提交评价数据
-    const jwtToken = localStorage.getItem('jwtToken');
     fetch(`${API_URL}/evaluations/results`, {
         method: 'POST',
         headers: {
@@ -112,8 +111,7 @@ document.getElementById('evaluationForm').addEventListener('submit', function (e
         body: JSON.stringify(formData)
     })
         .then(response => response.json())
-        .then(data => {
-
+        .then(() => {
             alert('评价提交成功！');
             document.getElementById('evaluationForm').reset();
 
@@ -193,7 +191,7 @@ function useEvaluation(data) {
     }
 }
 
-
+/* eslint-disable no-unused-vars */
 function deRequire(elClass) {
     const elements = document.getElementsByClassName(elClass);
     let atLeastOneChecked = Array.from(elements).some(el => el.checked);

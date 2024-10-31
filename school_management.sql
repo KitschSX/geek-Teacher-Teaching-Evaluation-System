@@ -11,7 +11,7 @@
  Target Server Version : 90100 (9.1.0)
  File Encoding         : 65001
 
- Date: 31/10/2024 23:02:10
+ Date: 01/11/2024 00:30:19
 */
 
 SET NAMES utf8mb4;
@@ -29,13 +29,14 @@ CREATE TABLE `admins`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of admins
 -- ----------------------------
 INSERT INTO `admins` VALUES (3, '张三', '男', 30, '2024-10-31 01:37:05', 'admin1');
 INSERT INTO `admins` VALUES (19, '李四', '女', 25, '2024-10-31 04:05:24', 'admin2');
+INSERT INTO `admins` VALUES (20, '<a>hi</a>', '男', 23, '2024-10-31 23:07:58', '123');
 
 -- ----------------------------
 -- Table structure for evaluation_metrics
@@ -139,7 +140,7 @@ CREATE TABLE `users`  (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `username`(`username` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of users
@@ -151,5 +152,6 @@ INSERT INTO `users` VALUES (5, 'admin7', '$2b$10$0MykPxmjoBj08C4THxBVMuXKP4Ihem0
 INSERT INTO `users` VALUES (6, 'admin8', '$2b$10$7QyQBcNsEZA8Ex5FRVz8GeO7xIs7Q8WpDOWd6tEv93LSWsMxZw/Nm', 'admin', '2024-10-31 02:57:14');
 INSERT INTO `users` VALUES (16, '2', '$2b$10$InBWLJ2Uz5Oj4CCTxFk2beMp.n/Lny1Z8dno0gGew0E44v/wfVKPS', 'admin', '2024-10-31 04:00:16');
 INSERT INTO `users` VALUES (19, 'admin2', '$2b$10$UpEoaR7LkSvIAVlw5jbaAuYBQNc8Azc3MgQYiYAdH/E1ndXJHEylq', 'admin', '2024-10-31 04:05:24');
+INSERT INTO `users` VALUES (20, '123', '$2b$10$sWv.TQooxYe0Gr0.wrt27.1EeH/mLFmK2gnqwaLyEVe5U0.1CFLbO', 'admin', '2024-10-31 23:07:58');
 
 SET FOREIGN_KEY_CHECKS = 1;
