@@ -7,5 +7,5 @@ router.get('/', authenticate, adminController.getAllAdmins);
 router.post('/', authenticate, adminController.addAdmin);
 router.put('/:id', authenticate, adminController.updateAdmin);
 router.delete('/:id', authenticate, adminController.deleteAdmin);
-
+router.post('/changePwd', authenticate, adminController.changePassword);
 module.exports = router;

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>评价结果</title>
   <style>
     table {
       border-collapse: collapse;
@@ -46,141 +46,63 @@
 </head>
 
 <body>
-  <h2>评价结果</h2>
-  <div id="table"></div>
+<h2>评价结果</h2>
+<div id="table"></div>
 </body>
 <script>
-  var data = {
-    dataList: [
-      {
-        "teacherid": "12",
-        "teachername": "王老师",
-        "formData": [
-          "非常好",
-          "非常认真",
-          "非常满意",
-          [
-            "课题设计",
-            "课堂氛围",
-            "随堂练习",
-            "知识复盘"
-          ]
-        ],
-        "evaluations": [
-          {
-            "method": "input",
-            "name": "input",
-            "title": "对老师的评价",
-            "placeholder": "在这里填写评价内容"
-          },
-          {
-            "method": "score",
-            "name": "score",
-            "title": "老师的授课态度",
-            "options": [
-              "非常认真",
-              "认真",
-              "一般认真"
-            ]
-          },
-          {
-            "method": "radio",
-            "name": "radio",
-            "title": "课题设计质量",
-            "options": [
-              "非常满意",
-              "满意",
-              "不满意"
-            ]
-          },
-          {
-            "method": "checkbox",
-            "name": "checkbox",
-            "title": "感受不错的方面",
-            "options": [
-              "课题设计",
-              "课堂氛围",
-              "随堂练习",
-              "知识复盘"
-            ]
-          }
-        ]
-      },
-      {
-        "teacherid": "22",
-        "teachername": "张老师",
-        "formData": [
-          "非常好",
-          " 认真",
-          "非常满意",
-          [
-            "课题设计",
-            "课堂氛围",
-            "随堂练习",
-          ]
-        ],
-        "evaluations": [
-          {
-            "method": "input",
-            "name": "input",
-            "title": "对老师的评价",
-            "placeholder": "在这里填写评价内容"
-          },
-          {
-            "method": "score",
-            "name": "score",
-            "title": "老师的授课态度",
-            "options": [
-              "非常认真",
-              "认真",
-              "一般认真"
-            ]
-          },
-          {
-            "method": "radio",
-            "name": "radio",
-            "title": "课题设计质量",
-            "options": [
-              "非常满意",
-              "满意",
-              "不满意"
-            ]
-          },
-          {
-            "method": "checkbox",
-            "name": "checkbox",
-            "title": "感受不错的方面",
-            "options": [
-              "课题设计",
-              "课堂氛围",
-              "随堂练习",
-              "知识复盘"
-            ]
-          }
-        ]
-      }]
+  const API_URL_RESULTS = 'http://localhost:3000/api/evaluations/results';
+  const API_URL_TEACHERS = 'http://localhost:3000/api/teachers';
+
+  // 初始化表格，动态获取数据
+  async function fetchData() {
+    try {
+      const teachersResponse = await fetch(API_URL_TEACHERS, {
+        headers: {
+          'Authorization': localStorage.getItem('jwtToken'),
+        }
+      });
+      if (!teachersResponse.ok) throw new Error('Failed to fetch teachers data');
+      const teachersData = await teachersResponse.json();
+
+      const resultsResponse = await fetch(API_URL_RESULTS, {
+        headers: {
+          'Authorization': localStorage.getItem('jwtToken'),
+        }
+      });
+      if (!resultsResponse.ok) throw new Error('Failed to fetch evaluation results');
+      const resultsData = await resultsResponse.json();
+
+      const teacherMap = new Map();
+      teachersData.forEach(teacher => {
+        teacherMap.set(teacher.id, teacher.name);
+      });
+      resultsData.forEach(result => {
+
+        result.teachername = teacherMap.get(result.id) || '未知教师';
+        console.log(result)
+        initTable(result);
+      });
+    } catch (error) {
+      console.error('获取数据失败:', error);
+    }
   }
+
   function initTable(data) {
     var tableHtml = `<h3>评价老师：  ${data.teachername}</h3>`
-    tableHtml += "<table><thead><tr>";
-    // for (var j in data.tableHeader) {
-    //   tableHtml += "<th>" + j + "</th>";
-    // }
-    tableHtml += "</tr></thead>";
-    tableHtml += "</tr></thead><tbody>";
-
+    tableHtml += "<table><thead><tr><th>评价项</th><th>评价内容</th></tr></thead><tbody>";
+    console.log('1')
     for (var i = 0; i < data.evaluations.length; i++) {
       tableHtml += "<tr>";
-      tableHtml += `<td>${data.evaluations[i].title}</td><td>${data.formData[i]}</td>`;
+      tableHtml += `<td>${data.evaluations[i].title}</td><td>${Array.isArray(data.results[i]) ? data.results[i].join(', ') : data.results[i]}</td>`;
       tableHtml += "</tr>";
     }
+    console.log('2')
     tableHtml += "</tbody></table>";
     document.getElementById("table").innerHTML += tableHtml;
   }
 
-  for(const i of data.dataList){
-    initTable(i);
-  }
+  // 初始化数据
+  fetchData();
 </script>
 
 </html>

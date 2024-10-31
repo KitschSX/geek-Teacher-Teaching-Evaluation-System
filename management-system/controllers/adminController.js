@@ -48,7 +48,47 @@ exports.addAdmin = (req, res) => {
         });
     });
 };
+exports.changePassword = (req, res) => {
+    const userId = req.user.id; // 从 `authenticate` 中间件解析出的用户 ID
+    const { oldPwd, newPwd } = req.body;
 
+    // 检查旧密码是否正确
+    db.query('SELECT password FROM users WHERE id = ?', [userId], (err, results) => {
+        if (err) {
+            return res.status(500).json({ code: 500, msg: '数据库查询失败' });
+        }
+        if (results.length === 0) {
+            return res.status(404).json({ code: 404, msg: '用户不存在' });
+        }
+
+        const hashedPassword = results[0].password;
+
+        // 比较旧密码是否匹配
+        bcrypt.compare(oldPwd, hashedPassword, (err, isMatch) => {
+            if (err) {
+                return res.status(500).json({ code: 500, msg: '密码匹配失败' });
+            }
+            if (!isMatch) {
+                return res.status(401).json({ code: 401, msg: '旧密码不正确' });
+            }
+
+            // 旧密码正确，更新新密码
+            bcrypt.hash(newPwd, 10, (err, newHashedPassword) => {
+                if (err) {
+                    return res.status(500).json({ code: 500, msg: '密码加密失败' });
+                }
+
+                db.query('UPDATE users SET password = ? WHERE id = ?', [newHashedPassword, userId], (err) => {
+                    if (err) {
+                        return res.status(500).json({ code: 500, msg: '数据库更新失败' });
+                    }
+
+                    res.status(200).json({ code: 200, msg: '密码修改成功' });
+                });
+            });
+        });
+    });
+};
 exports.updateAdmin = (req, res) => {
     const {name, gender, age, username} = req.body;
     const {id} = req.params;
