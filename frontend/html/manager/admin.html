@@ -1,245 +1,253 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>管理员管理</title>
+    <style>
+      table {
+        border-collapse: collapse;
+        font-size: 16px;
+        margin: 20px auto;
+        width: 80%;
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>管理员管理</title>
-  <style>
-    table {
-      border-collapse: collapse;
-      font-size: 16px;
-      margin: 20px auto;
-      width: 80%;
-
-      table-layout: fixed;
-    }
-
-    th,
-    td {
-      border: 1px solid #ccc;
-      padding: 10px;
-      text-align: center;
-      width: auto;
-    }
-
-    th {
-      background-color: #f2f2f2;
-      color: #333;
-    }
-
-    tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
-
-    button {
-      padding: 5px 10px;
-      background-color: #007BFF;
-      color: white;
-      border: none;
-      cursor: pointer;
-      border-radius: 5px;
-    }
-
-    button:hover {
-      background-color: #0056b3;
-    }
-
-    input {
-      text-align: center;
-      box-sizing: border-box; /* 包含 padding 和边框在宽度内 */
-      border: 0;
-
-      width: 80px;
-      font-size: 16px;
-    }
-
-    input:focus {
-      outline: none; /* 去掉聚焦时的默认边框 */
-    }
-  </style>
-</head>
-
-<body>
-<h2>管理员管理</h2>
-<div id="table"></div>
-</body>
-
-<script>
-  const API_URL = 'http://localhost:3000/api';
-
-  var data = {
-    tableHeader: { '姓名': 'name', '性别': 'gender', '年龄': 'age', '用户名': 'username' },
-    data: [],
-  };
-
-  async function fetchData() {
-    try {
-      const response = await fetch(`${API_URL}/admins`, {
-        headers: {
-          'Authorization': localStorage.getItem('jwtToken'),
-        },
-      });
-      if (!response.ok) throw new Error('网络错误');
-
-      let res = await response.json();
-      data.data = res.data;
-      initTable();
-    } catch (error) {
-      console.error('获取数据失败:', error);
-    }
-  }
-
-  async function create(rowData) {
-    try {
-      const jwtToken = localStorage.getItem('jwtToken');
-      const response = await fetch(`${API_URL}/admins`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': jwtToken,
-        },
-        body: JSON.stringify(rowData),
-      }).then(response => {
-        if (!response.ok) {
-          // 如果响应状态不是 200，抛出错误
-          throw new Error('添加失败');
-        }
-        return response; // 解析 JSON
-      });
-      const result = await response.json();
-      console.log(result);
-      alert('添加成功')
-    } catch (error) {
-      alert('添加数据失败')
-      console.error('添加数据失败:', error);
-    }
-    await fetchData();
-  }
-
-  async function remove(id) {
-    try {
-      const jwtToken = localStorage.getItem('jwtToken');
-      await fetch(`${API_URL}/admins/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': jwtToken,
-        },
-      });
-      data.data = data.data.filter(item => item.id !== id);
-
-    } catch (error) {
-      console.error('删除数据失败:', error);
-    }
-    initTable();
-  }
-
-  async function update(id, updatedData) {
-    try {
-      const jwtToken = localStorage.getItem('jwtToken');
-      await fetch(`${API_URL}/admins/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': jwtToken,
-        },
-        body: JSON.stringify(updatedData),
-      });
-      const index = data.data.findIndex(item => item.id === id);
-      data.data[index] = { ...data.data[index], ...updatedData };
-
-    } catch (error) {
-      console.error('更新数据失败:', error);
-    }
-    initTable();
-  }
-
-  function initTable() {
-    const table = document.createElement('table');
-    const thead = document.createElement('thead');
-    const tbody = document.createElement('tbody');
-
-    const headerRow = document.createElement('tr');
-    for (const key in data.tableHeader) {
-      const th = document.createElement('th');
-      th.textContent = key;
-      headerRow.appendChild(th);
-    }
-    const operationTh = document.createElement('th');
-    operationTh.textContent = '操作';
-    headerRow.appendChild(operationTh);
-    thead.appendChild(headerRow);
-
-    data.data.forEach((item) => {
-      const row = document.createElement('tr');
-      for (const key in item) {
-        if(key==='id')continue;
-        const td = document.createElement('td');
-        td.textContent = item[key];
-        td.dataset.id = key;
-        td.dataset.idx = item.id;
-        td.addEventListener('dblclick', (e) => editCell(e.target, item.id));
-        row.appendChild(td);
+        table-layout: fixed;
       }
-      const deleteTd = document.createElement('td');
-      const deleteButton = document.createElement('button');
-      deleteButton.textContent = '删除';
-      deleteButton.dataset.idx = item.id;
-      deleteButton.addEventListener('click', () => remove(item.id));
-      deleteTd.appendChild(deleteButton);
-      row.appendChild(deleteTd);
-      tbody.appendChild(row);
-    });
 
-    // 添加新管理员的输入行
-    const addRow = document.createElement('tr');
-    const inputNames = ['name', 'gender', 'age', 'username'];
-    inputNames.forEach(name => {
-      const td = document.createElement('td');
-      const input = document.createElement('input');
-      input.placeholder = name === 'name' ? '姓名' : name === 'gender' ? '性别' : name === 'age' ? '年龄' : '用户名';
-      input.dataset.id = name;
-      td.appendChild(input);
-      addRow.appendChild(td);
-    });
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+        width: auto;
+      }
 
-    const addTd = document.createElement('td');
-    const addButton = document.createElement('button');
-    addButton.textContent = '添加';
-    addButton.addEventListener('click', () => {
-      const newAdminData = {};
-      inputNames.forEach(name => {
-        const input = addRow.querySelector(`input[data-id="${name}"]`);
-        newAdminData[name] = input.value;
-      });
-      create(newAdminData);
-    });
-    addTd.appendChild(addButton);
-    addRow.appendChild(addTd);
-    tbody.appendChild(addRow);
+      th {
+        background-color: #f2f2f2;
+        color: #333;
+      }
 
-    table.appendChild(thead);
-    table.appendChild(tbody);
-    document.getElementById('table').innerHTML = '';
-    document.getElementById('table').appendChild(table);
-  }
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
 
-  function editCell(cell, id) {
-    cell.contentEditable = true;
-    cell.addEventListener('blur', async (e) => {
-      const newValue = cell.textContent;
-      const dataId = cell.dataset.id;
-      const updatedData = { [dataId]: newValue };
-      console.log(id, updatedData)
-      await update(id, updatedData);
-      cell.contentEditable = false;
+      button {
+        padding: 5px 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      input {
+        text-align: center;
+        box-sizing: border-box; /* 包含 padding 和边框在宽度内 */
+        border: 0;
+
+        width: 80px;
+        font-size: 16px;
+      }
+
+      input:focus {
+        outline: none; /* 去掉聚焦时的默认边框 */
+      }
+    </style>
+  </head>
+
+  <body>
+    <h2>管理员管理</h2>
+    <div id="table"></div>
+  </body>
+
+  <script>
+    const API_URL = 'http://localhost:3000/api';
+
+    var data = {
+      tableHeader: {
+        姓名: 'name',
+        性别: 'gender',
+        年龄: 'age',
+        用户名: 'username',
+      },
+      data: [],
+    };
+
+    async function fetchData() {
+      try {
+        const response = await fetch(`${API_URL}/admins`, {
+          headers: {
+            Authorization: localStorage.getItem('jwtToken'),
+          },
+        });
+        if (!response.ok) throw new Error('网络错误');
+
+        let res = await response.json();
+        data.data = res.data;
+        initTable();
+      } catch (error) {
+        console.error('获取数据失败:', error);
+      }
+    }
+
+    async function create(rowData) {
+      try {
+        const jwtToken = localStorage.getItem('jwtToken');
+        const response = await fetch(`${API_URL}/admins`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: jwtToken,
+          },
+          body: JSON.stringify(rowData),
+        }).then((response) => {
+          if (!response.ok) {
+            // 如果响应状态不是 200，抛出错误
+            throw new Error('添加失败');
+          }
+          return response; // 解析 JSON
+        });
+        const result = await response.json();
+        console.log(result);
+        alert('添加成功');
+      } catch (error) {
+        alert('添加数据失败');
+        console.error('添加数据失败:', error);
+      }
+      await fetchData();
+    }
+
+    async function remove(id) {
+      try {
+        const jwtToken = localStorage.getItem('jwtToken');
+        await fetch(`${API_URL}/admins/${id}`, {
+          method: 'DELETE',
+          headers: {
+            Authorization: jwtToken,
+          },
+        });
+        data.data = data.data.filter((item) => item.id !== id);
+      } catch (error) {
+        console.error('删除数据失败:', error);
+      }
       initTable();
-    });
-    cell.focus();
-  }
+    }
 
-  // 初始化数据
-  fetchData();
-</script>
+    async function update(id, updatedData) {
+      try {
+        const jwtToken = localStorage.getItem('jwtToken');
+        await fetch(`${API_URL}/admins/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: jwtToken,
+          },
+          body: JSON.stringify(updatedData),
+        });
+        const index = data.data.findIndex((item) => item.id === id);
+        data.data[index] = { ...data.data[index], ...updatedData };
+      } catch (error) {
+        console.error('更新数据失败:', error);
+      }
+      initTable();
+    }
 
+    function initTable() {
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      const tbody = document.createElement('tbody');
+
+      const headerRow = document.createElement('tr');
+      for (const key in data.tableHeader) {
+        const th = document.createElement('th');
+        th.textContent = key;
+        headerRow.appendChild(th);
+      }
+      const operationTh = document.createElement('th');
+      operationTh.textContent = '操作';
+      headerRow.appendChild(operationTh);
+      thead.appendChild(headerRow);
+
+      data.data.forEach((item) => {
+        const row = document.createElement('tr');
+        for (const key in item) {
+          if (key === 'id') continue;
+          const td = document.createElement('td');
+          td.textContent = item[key];
+          td.dataset.id = key;
+          td.dataset.idx = item.id;
+          td.addEventListener('dblclick', (e) => editCell(e.target, item.id));
+          row.appendChild(td);
+        }
+        const deleteTd = document.createElement('td');
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = '删除';
+        deleteButton.dataset.idx = item.id;
+        deleteButton.addEventListener('click', () => remove(item.id));
+        deleteTd.appendChild(deleteButton);
+        row.appendChild(deleteTd);
+        tbody.appendChild(row);
+      });
+
+      // 添加新管理员的输入行
+      const addRow = document.createElement('tr');
+      const inputNames = ['name', 'gender', 'age', 'username'];
+      inputNames.forEach((name) => {
+        const td = document.createElement('td');
+        const input = document.createElement('input');
+        input.placeholder =
+          name === 'name'
+            ? '姓名'
+            : name === 'gender'
+              ? '性别'
+              : name === 'age'
+                ? '年龄'
+                : '用户名';
+        input.dataset.id = name;
+        td.appendChild(input);
+        addRow.appendChild(td);
+      });
+
+      const addTd = document.createElement('td');
+      const addButton = document.createElement('button');
+      addButton.textContent = '添加';
+      addButton.addEventListener('click', () => {
+        const newAdminData = {};
+        inputNames.forEach((name) => {
+          const input = addRow.querySelector(`input[data-id="${name}"]`);
+          newAdminData[name] = input.value;
+        });
+        create(newAdminData);
+      });
+      addTd.appendChild(addButton);
+      addRow.appendChild(addTd);
+      tbody.appendChild(addRow);
+
+      table.appendChild(thead);
+      table.appendChild(tbody);
+      document.getElementById('table').innerHTML = '';
+      document.getElementById('table').appendChild(table);
+    }
+
+    function editCell(cell, id) {
+      cell.contentEditable = true;
+      cell.addEventListener('blur', async (e) => {
+        const newValue = cell.textContent;
+        const dataId = cell.dataset.id;
+        const updatedData = { [dataId]: newValue };
+        console.log(id, updatedData);
+        await update(id, updatedData);
+        cell.contentEditable = false;
+        initTable();
+      });
+      cell.focus();
+    }
+
+    // 初始化数据
+    fetchData();
+  </script>
 </html>

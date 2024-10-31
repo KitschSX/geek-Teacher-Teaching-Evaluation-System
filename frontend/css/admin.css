@@ -1,5 +1,5 @@
 body {
-    overflow: hidden;
+  overflow: hidden;
 }
 .menu-section {
   position: fixed;
@@ -22,7 +22,7 @@ h3 {
 .page-section {
   margin-left: 175px;
   width: auto;
-    overflow: hidden;
+  overflow: hidden;
 }
 
 .page-section > header {
@@ -38,7 +38,7 @@ h3 {
 .button {
   padding: 10px 20px;
   margin: 10px;
-  background-color: #007BFF;
+  background-color: #007bff;
   color: white;
   border: none;
   border-radius: 4px;
@@ -62,13 +62,12 @@ h3 {
 ul {
   padding: 0;
 }
-ul li{
+ul li {
   list-style: none;
   margin: 5px;
   padding: 20px;
   border-radius: 15px;
 }
-
 
 iframe {
   padding-left: 20px;
@@ -81,52 +80,75 @@ iframe {
 }
 
 @-webkit-keyframes FADEY {
-    0%   { opacity: 0; transform: translateY(50px); }
-    100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes FADEY {
-    0%   { opacity: 0; transform: translateY(50px); }
-    100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 @-webkit-keyframes FADEY1 {
-    0%   { opacity: 0; transform: translateY(10px); }
-    100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes FADEY1 {
-    0%   { opacity: 0; transform: translateY(10px); }
-    100% { opacity: 1; transform: translateY(0); }
-}
-.intro { 
-    -webkit-animation-name: FADEY1;
-    animation-name: FADEY1;
-    -webkit-animation-duration: 1s; 
-    animation-duration: 1s; 
-    -webkit-animation-timing-function: ease-in-out; 
-    animation-timing-function: ease-in-out; 
-    -webkit-animation-iteration-count: 1;
-    animation-iteration-count: 1;
-}
-
-.design-selection, .design-archives {
+  0% {
     opacity: 0;
-    -webkit-opacity: 0;
-    animation-name: FADEY;
-    -webkit-animation-name: FADEY;
-    animation-duration: 1s; 
-    -webkit-animation-duration: 1s; 
-    animation-timing-function: ease-in-out; 
-    -webkit-animation-timing-function: ease-in-out; 
-    animation-delay: 1s;
-    -webkit-animation-delay: 1s;
-    animation-fill-mode: forwards;
-    -webkit-animation-fill-mode: forwards;
-    animation-iteration-count: 1;
-    -webkit-animation-iteration-count: 1;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.intro {
+  -webkit-animation-name: FADEY1;
+  animation-name: FADEY1;
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-timing-function: ease-in-out;
+  animation-timing-function: ease-in-out;
+  -webkit-animation-iteration-count: 1;
+  animation-iteration-count: 1;
 }
 
-
+.design-selection,
+.design-archives {
+  opacity: 0;
+  -webkit-opacity: 0;
+  animation-name: FADEY;
+  -webkit-animation-name: FADEY;
+  animation-duration: 1s;
+  -webkit-animation-duration: 1s;
+  animation-timing-function: ease-in-out;
+  -webkit-animation-timing-function: ease-in-out;
+  animation-delay: 1s;
+  -webkit-animation-delay: 1s;
+  animation-fill-mode: forwards;
+  -webkit-animation-fill-mode: forwards;
+  animation-iteration-count: 1;
+  -webkit-animation-iteration-count: 1;
+}
 
 iframe.fade-out {
   opacity: 0;
@@ -137,14 +159,20 @@ iframe.fade-in {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* 基本样式 */
 .menu-item {
   cursor: pointer; /* 鼠标悬停时变为点击形状 */
-  transition: background-color 0.3s, color 0.3s; /* 平滑过渡效果 */
+  transition:
+    background-color 0.3s,
+    color 0.3s; /* 平滑过渡效果 */
 }
 
 /* 悬停时的样式 */
