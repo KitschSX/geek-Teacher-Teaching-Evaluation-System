@@ -4,13 +4,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>教师管理</title>
   <style>
     table {
       border-collapse: collapse;
       font-size: 16px;
       margin: 20px auto;
       width: 80%;
+      table-layout: fixed;
     }
 
     th,
@@ -51,27 +52,113 @@
       outline: none;
       text-align: center;
     }
+    input {
+      text-align: center;
+      box-sizing: border-box; /* 包含 padding 和边框在宽度内 */
+      border: 0;
+
+      width: 80px;
+      font-size: 16px;
+    }
+
+    input:focus {
+      outline: none; /* 去掉聚焦时的默认边框 */
+    }
   </style>
 </head>
 
 <body>
-  <h2>教师管理</h2>
-  <div id="table"></div>
+<h2>教师管理</h2>
+<div id="table"></div>
 </body>
+
 <script>
+  const API_URL = 'http://localhost:3000/api';
+
   var data = {
-    tableHeader: { '姓名': 'name', '性别': 'gender', '年龄': 'age', '课程': 'course' },
-    data: [
-      { id: 1001, name: "张三1", gender: "男", age: '20', course: '数学' },
-      { id: 1002, name: "李四1", gender: "女", age: '11', course: '语文' },
-      { id: 1003, name: "张三2", gender: "男", age: '16', course: '英语' },
-      { id: 1004, name: "李四2", gender: "女", age: '18', course: '政治' },
-      { id: 1005, name: "张三3", gender: "男", age: '14', course: '物理' },
-      { id: 1006, name: "李四3", gender: "女", age: '18', course: '化学' },
-      { id: 1007, name: "张三4", gender: "男", age: '21', course: '地理' },
-    ],
+    tableHeader: { '姓名': 'name', '性别': 'gender', '年龄': 'age', '课程': 'classes' },
+    data: [],
   };
 
+  // 获取教师数据
+  async function fetchData() {
+    try {
+      const response = await fetch(`${API_URL}/teachers`, {
+        headers: {
+          'Authorization': localStorage.getItem('jwtToken'),
+        },
+      });
+      if (!response.ok) throw new Error('网络错误');
+
+      data.data = await response.json();
+      initTable();
+    } catch (error) {
+      console.error('获取数据失败:', error);
+    }
+  }
+
+  // 创建新教师
+  async function create(rowData) {
+    try {
+      const response = await fetch(`${API_URL}/teachers`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('jwtToken'),
+        },
+        body: JSON.stringify(rowData),
+      });
+      if (!response.ok) {
+        throw new Error('添加失败');
+      }
+      alert('添加成功');
+    } catch (error) {
+      alert('添加数据失败');
+      console.error('添加数据失败:', error);
+    }
+    fetchData();
+  }
+
+  // 删除教师
+  async function remove(id) {
+    try {
+      const jwtToken = localStorage.getItem('jwtToken');
+      await fetch(`${API_URL}/teachers/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': localStorage.getItem('jwtToken'),
+        },
+      });
+      data.data = data.data.filter(item => item.id !== id); // 从本地数据中移除
+      alert('删除成功');
+    } catch (error) {
+      console.error('删除数据失败:', error);
+    }
+    fetchData();
+  }
+
+  // 更新教师信息
+  async function update(id, updatedData) {
+    try {
+      const jwtToken = localStorage.getItem('jwtToken');
+      await fetch(`${API_URL}/teachers/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('jwtToken'),
+        },
+        body: JSON.stringify(updatedData),
+      });
+      const index = data.data.findIndex(item => item.id === id);
+      data.data[index] = { ...data.data[index], ...updatedData }; // 更新本地数据
+      alert('更新成功');
+    } catch (error) {
+      console.error('更新数据失败:', error);
+    }
+    fetchData();
+  }
+
+  // 初始化表格
   function initTable() {
     const table = document.createElement('table');
     const thead = document.createElement('thead');
@@ -89,43 +176,54 @@
     headerRow.appendChild(operationTh);
     thead.appendChild(headerRow);
 
-    // 创建表单行
-    const formRow = document.createElement('tr');
-    for (const key in data.tableHeader) {
-      const td = document.createElement('td');
-      td.contentEditable = true;
-      td.dataset.id = data.tableHeader[key];
-      formRow.appendChild(td);
-    }
-    const addTd = document.createElement('td');
-    const addButton = document.createElement('button');
-    addButton.textContent = '添加';
-    addButton.addEventListener('click', (e) => create(e.target));
-    addTd.appendChild(addButton);
-    formRow.appendChild(addTd);
-    tbody.appendChild(formRow);
-
     // 创建数据行
     data.data.forEach((item) => {
       const row = document.createElement('tr');
       for (const key in item) {
-        if (key === 'id') continue;
+        if (key === 'id' || key === 'created_at') continue;
         const td = document.createElement('td');
         td.textContent = item[key];
         td.dataset.id = key;
         td.dataset.idx = item.id;
-        td.addEventListener('dblclick', (e) => editCell(e.target));
+        td.addEventListener('dblclick', (e) => editCell(e.target, item.id));
         row.appendChild(td);
       }
       const deleteTd = document.createElement('td');
       const deleteButton = document.createElement('button');
       deleteButton.textContent = '删除';
       deleteButton.dataset.idx = item.id;
-      deleteButton.addEventListener('click', (e) => remove(e.target));
+      deleteButton.addEventListener('click', () => remove(item.id));
       deleteTd.appendChild(deleteButton);
       row.appendChild(deleteTd);
       tbody.appendChild(row);
     });
+
+    // 添加新教师的输入行
+    const addRow = document.createElement('tr');
+    const inputNames = ['name', 'gender', 'age', 'classes'];
+    inputNames.forEach(name => {
+      const td = document.createElement('td');
+      const input = document.createElement('input');
+      input.placeholder = name === 'name' ? '姓名' : name === 'gender' ? '性别' : name === 'age' ? '年龄' : '课程';
+      input.dataset.id = name;
+      td.appendChild(input);
+      addRow.appendChild(td);
+    });
+
+    const addTd = document.createElement('td');
+    const addButton = document.createElement('button');
+    addButton.textContent = '添加';
+    addButton.addEventListener('click', () => {
+      const newTeacherData = {};
+      inputNames.forEach(name => {
+        const input = addRow.querySelector(`input[data-id="${name}"]`);
+        newTeacherData[name] = input.value;
+      });
+      create(newTeacherData);
+    });
+    addTd.appendChild(addButton);
+    addRow.appendChild(addTd);
+    tbody.appendChild(addRow);
 
     table.appendChild(thead);
     table.appendChild(tbody);
@@ -133,50 +231,21 @@
     document.getElementById('table').appendChild(table);
   }
 
-  function editCell(cell) {
+  // 编辑单元格
+  function editCell(cell, id) {
     cell.contentEditable = true;
-    cell.addEventListener('blur', (e) => saveCell(e.target));
+    cell.addEventListener('blur', async (e) => {
+      const newValue = cell.textContent;
+      const dataId = cell.dataset.id;
+      const updatedData = { [dataId]: newValue };
+      await update(id, updatedData);
+      cell.contentEditable = false;
+    });
     cell.focus();
   }
 
-  function saveCell(cell) {
-    cell.contentEditable = false;
-    const newValue = cell.textContent;
-    const dataId = cell.dataset.id;
-    const rowIdx = cell.parentElement.rowIndex - 2; // 考虑到表单行
-    data.data[rowIdx][dataId] = newValue;
-    console.log(data);
-  }
-
-  function remove(btn) {
-    const idx = btn.dataset.idx;
-    data.data = data.data.filter(item => item.id !== parseInt(idx));
-    initTable();
-  }
-
-  function create(btn) {
-    const row = btn.parentElement.parentElement;
-    const rowData = {};
-    for (let i = 0; i < row.children.length - 1; i++) {
-      const cell = row.children[i];
-      const dataId = cell.dataset.id;
-      const cellValue = cell.textContent;
-      if (cellValue === '') {
-        alert('请输入数据');
-        return;
-      }
-      rowData[dataId] = cellValue;
-    }
-    rowData.id = generateUniqueID();
-    data.data.push(rowData);
-    initTable();
-  }
-
-  function generateUniqueID() {
-    return Math.floor(Math.random() * 1000000) + 1001;
-  }
-
-  initTable();
+  // 初始化数据
+  fetchData();
 </script>
 
 </html>

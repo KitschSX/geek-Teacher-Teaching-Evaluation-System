@@ -11,6 +11,8 @@
       font-size: 16px;
       margin: 20px auto;
       width: 80%;
+
+      table-layout: fixed;
     }
 
     th,
@@ -45,12 +47,15 @@
 
     input {
       text-align: center;
+      box-sizing: border-box; /* 包含 padding 和边框在宽度内 */
       border: 0;
+
+      width: 80px;
       font-size: 16px;
     }
 
     input:focus {
-      border: 0;
+      outline: none; /* 去掉聚焦时的默认边框 */
     }
   </style>
 </head>
