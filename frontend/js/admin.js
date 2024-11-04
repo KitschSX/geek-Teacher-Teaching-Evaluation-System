@@ -30,6 +30,14 @@ var menuData = [
     url: './html/manager/pwd.html',
   },
 ];
+document.addEventListener('DOMContentLoaded', function () {
+  const jwtToken = localStorage.getItem('jwtToken');
+  if (!jwtToken) {
+    alert('您还未登录，请先登录');
+    window.location.href = 'login.html';
+    return;
+  }
+});
 
 // 获取渲染菜单和内容区域元素
 var menuSection = document.getElementById('menuSection');
@@ -274,5 +282,6 @@ initMenu();
 // });
 
 document.getElementById('logout').addEventListener('click', function () {
+  localStorage.removeItem('jwtToken'); // 删除 JWT 令牌
   window.location.href = 'login.html';
 });

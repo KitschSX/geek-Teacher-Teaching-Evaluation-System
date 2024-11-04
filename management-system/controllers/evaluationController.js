@@ -9,7 +9,7 @@ exports.getAllMetrics = (req, res) => {
 
 exports.addMetric = (req, res) => {
     const { name, title, options } = req.body;
-    const orderNum = 1; // 设置默认顺序
+    const orderNum = 10; // 设置默认顺序
     db.query('INSERT INTO evaluation_metrics (name, title, options, order_num) VALUES (?, ?, ?, ?)', [name, title, JSON.stringify(options), orderNum], (err) => {
         if (err) return res.status(500).json(err);
         res.json({ message: '评价指标添加成功' });

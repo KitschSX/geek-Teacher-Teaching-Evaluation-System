@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>学生管理</title>
+    <style>
+      table {
+        border-collapse: collapse;
+        font-size: 16px;
+        margin: 20px auto;
+        width: 90%;
+        table-layout: fixed;
+      }
+
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+        width: auto;
+      }
+
+      th {
+        background-color: #f2f2f2;
+        color: #333;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      button {
+        padding: 5px 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      .editable-input {
+        width: auto;
+        height: 100%;
+        box-sizing: border-box;
+        border: none;
+        outline: none;
+        text-align: center;
+      }
+      input {
+        text-align: center;
+        box-sizing: border-box; /* 包含 padding 和边框在宽度内 */
+        border: 0;
+
+        width: 80px;
+        font-size: 16px;
+      }
+
+      input:focus {
+        outline: none; /* 去掉聚焦时的默认边框 */
+      }
+    </style>
+  </head>
+
+  <body>
+    <h2>学生管理</h2>
+    <div id="table"></div>
+  </body>
+
+  <script>
+    const API_URL = 'http://localhost:3000/api';
+
+    var data = {
+      tableHeader: {
+        姓名: 'name',
+        性别: 'gender',
+        年龄: 'age',
+        学号: 'studentId',
+        班级: 'class',
+        用户名: 'username',
+      },
+      data: [],
+    };
+
+    // 获取学生数据
+    async function fetchData() {
+      try {
+        const response = await fetch(`${API_URL}/students`, {
+          headers: {
+            Authorization: localStorage.getItem('jwtToken'),
+          },
+        });
+        if (!response.ok) throw new Error('网络错误');
+
+        data.data = await response.json();
+        initTable();
+      } catch (error) {
+        console.error('获取数据失败:', error);
+      }
+    }
+
+    // 创建新学生
+    async function create(rowData) {
+      try {
+        const jwtToken = localStorage.getItem('jwtToken');
+        const response = await fetch(`${API_URL}/students`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: localStorage.getItem('jwtToken'),
+          },
+          body: JSON.stringify(rowData),
+        });
+        if (!response.ok) {
+          throw new Error('添加失败');
+        }
+        const result = await response.json();
+        data.data.push(result); // 将新学生数据添加到本地
+        alert('添加成功');
+      } catch (error) {
+        alert('添加数据失败');
+        console.error('添加数据失败:', error);
+      }
+      initTable();
+    }
+
+    // 删除学生
+    async function remove(id) {
+      try {
+        const jwtToken = localStorage.getItem('jwtToken');
+        await fetch(`${API_URL}/students/${id}`, {
+          method: 'DELETE',
+          headers: {
+            Authorization: localStorage.getItem('jwtToken'),
+          },
+        });
+        data.data = data.data.filter((item) => item.id !== id); // 从本地数据中移除
+        alert('删除成功');
+      } catch (error) {
+        console.error('删除数据失败:', error);
+      }
+      initTable();
+    }
+
+    // 更新学生信息
+    async function update(id, updatedData) {
+      try {
+        const jwtToken = localStorage.getItem('jwtToken');
+        await fetch(`${API_URL}/students/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: localStorage.getItem('jwtToken'),
+          },
+          body: JSON.stringify(updatedData),
+        });
+        const index = data.data.findIndex((item) => item.id === id);
+        data.data[index] = { ...data.data[index], ...updatedData }; // 更新本地数据
+        alert('更新成功');
+      } catch (error) {
+        console.error('更新数据失败:', error);
+      }
+      initTable();
+    }
+
+    // 初始化表格
+    function initTable() {
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      const tbody = document.createElement('tbody');
+
+      // 创建表头
+      const headerRow = document.createElement('tr');
+      for (const key in data.tableHeader) {
+        const th = document.createElement('th');
+        th.textContent = key;
+        headerRow.appendChild(th);
+      }
+      const operationTh = document.createElement('th');
+      operationTh.textContent = '操作';
+      headerRow.appendChild(operationTh);
+      thead.appendChild(headerRow);
+
+      // 创建数据行
+      data.data.forEach((item) => {
+        const row = document.createElement('tr');
+        for (const key in item) {
+          if (key === 'id' || key === 'created_at') continue;
+          const td = document.createElement('td');
+          td.textContent = item[key];
+          td.dataset.id = key;
+          td.dataset.idx = item.id;
+          td.addEventListener('dblclick', (e) => editCell(e.target, item.id));
+          row.appendChild(td);
+        }
+        const deleteTd = document.createElement('td');
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = '删除';
+        deleteButton.dataset.idx = item.id;
+        deleteButton.addEventListener('click', () => remove(item.id));
+        deleteTd.appendChild(deleteButton);
+        row.appendChild(deleteTd);
+        tbody.appendChild(row);
+      });
+
+      // 添加新学生的输入行
+      const addRow = document.createElement('tr');
+      const inputNames = ['姓名', '性别', '年龄', '学号', '班级', '用户名'];
+      inputNames.forEach((name) => {
+        const td = document.createElement('td');
+        const input = document.createElement('input');
+        input.placeholder = name;
+        input.dataset.id = name;
+        td.appendChild(input);
+        addRow.appendChild(td);
+      });
+
+      const addTd = document.createElement('td');
+      const addButton = document.createElement('button');
+      addButton.textContent = '添加';
+      addButton.addEventListener('click', () => {
+        const newStudentData = {};
+        inputNames.forEach((name) => {
+          const input = addRow.querySelector(`input[data-id="${name}"]`);
+          newStudentData[name] = input.value;
+        });
+        create(newStudentData);
+      });
+      addTd.appendChild(addButton);
+      addRow.appendChild(addTd);
+      tbody.appendChild(addRow);
+
+      table.appendChild(thead);
+      table.appendChild(tbody);
+      document.getElementById('table').innerHTML = '';
+      document.getElementById('table').appendChild(table);
+    }
+
+    // 编辑单元格
+    function editCell(cell, id) {
+      cell.contentEditable = true;
+      cell.addEventListener('blur', async (e) => {
+        const newValue = cell.textContent;
+        const dataId = cell.dataset.id;
+        const updatedData = { [dataId]: newValue };
+        await update(id, updatedData);
+        cell.contentEditable = false;
+      });
+      cell.focus();
+    }
+
+    // 初始化数据
+    fetchData();
+  </script>
+</html>

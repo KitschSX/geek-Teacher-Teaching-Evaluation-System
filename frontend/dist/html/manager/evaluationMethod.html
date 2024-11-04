@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>评价指标管理</title>
+    <style>
+      table {
+        border-collapse: collapse;
+        font-size: 16px;
+        margin: 20px auto;
+        width: 80%;
+      }
+
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+        width: auto;
+      }
+
+      th {
+        background-color: #f2f2f2;
+        color: #333;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      button {
+        padding: 5px 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      .editable-cell {
+        padding: 0;
+        height: 100%;
+        box-sizing: border-box;
+        outline: none;
+        text-align: center;
+      }
+
+      .form-control {
+        width: 100%;
+        text-align: center;
+        border: none;
+        font-size: 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h2>评价指标管理</h2>
+    <div id="table"></div>
+  </body>
+  <script>
+    const API_URL = 'http://localhost:3000/api/evaluations/metrics';
+    const jwtToken = localStorage.getItem('jwtToken');
+
+    // 初始化表格，动态获取数据
+    async function fetchData() {
+      try {
+        const response = await fetch(API_URL, {
+          headers: {
+            Authorization: localStorage.getItem('jwtToken'),
+          },
+        });
+        if (!response.ok) throw new Error('Failed to fetch data');
+        data.data = await response.json(); // 从服务器获取的数据
+        console.log(data);
+        initTable();
+      } catch (error) {
+        console.error('获取数据失败:', error);
+      }
+    }
+
+    function initTable() {
+      var tableHtml = '<table><thead><tr>';
+      for (var j in data.tableHeader) {
+        tableHtml += '<th>' + j + '</th>';
+      }
+      tableHtml += '<th>操作</th></tr></thead><tbody>';
+
+      // 数据行
+      for (var i = 0; i < data.data.length; i++) {
+        tableHtml += '<tr>';
+        for (var j in data.tableHeader) {
+          if (j == '指标类') {
+            tableHtml += `<td>${data.data[i]['name']}</td>`;
+          } else if (j == '指标名') {
+            tableHtml += `<td idx=${data.data[i]['id']} data-id='title' ondblclick="editCell(this)" class='editable-cell'>${data.data[i]['title']}</td>`;
+          } else if (j == '可选项') {
+            let optionsString =
+              Array.isArray(data.data[i]['options']) &&
+              data.data[i]['options'].length > 0
+                ? data.data[i]['options'].join(', ')
+                : '无';
+            tableHtml += `<td idx=${data.data[i]['id']} data-id='options' ondblclick="editCell(this)" class='editable-cell'>${optionsString}</td>`;
+          }
+        }
+        tableHtml += `<td><button onclick='remove(${data.data[i]['id']})'>删除</button></td>`;
+        tableHtml += '</tr>';
+      }
+
+      // 表单行 (放在最后)
+      tableHtml += '<tr>';
+      tableHtml += `<td data-id='name'><select class="form-control" id="method1" required>
+          <option value="input">input</option>
+          <option value="score">score</option>
+          <option value="checkbox">checkbox</option>
+          <option value="radio">radio</option>
+          <option value="select">select</option>
+        </select></td>`;
+      tableHtml += `<td contenteditable='true' data-id='title' class='editable-cell'></td>`;
+      tableHtml += `<td contenteditable='true' data-id='options' class='editable-cell' placeholder='选项用逗号分隔'></td>`;
+      tableHtml += `<td><button onclick='create()'>添加</button></td>`;
+      tableHtml += '</tr>';
+
+      tableHtml += '</tbody></table>';
+      document.getElementById('table').innerHTML = tableHtml;
+    }
+
+    // 获取请求选项函数
+    function getRequestOptions(method = 'GET', body = null) {
+      const headers = {
+        Authorization: localStorage.getItem('jwtToken'),
+        'Content-Type': 'application/json',
+      };
+      return {
+        method,
+        headers,
+        body: body ? JSON.stringify(body) : null,
+      };
+    }
+
+    // 编辑单元格
+    async function editCell(cell) {
+      cell.contentEditable = true;
+      cell.classList.add('editable-cell');
+      cell.focus();
+      cell.addEventListener('blur', async () => {
+        cell.contentEditable = false;
+        let newValue = cell.textContent.trim();
+        let dataId = cell.getAttribute('data-id');
+        let rowIdx = data.data.findIndex(
+          (item) => item.id == cell.getAttribute('idx')
+        );
+
+        if (dataId === 'options') {
+          newValue = newValue
+            ? newValue.split(',').map((option) => option.trim())
+            : [];
+        }
+
+        // 更新本地数据
+        data.data[rowIdx][dataId] = newValue;
+
+        // 发送更新请求
+        try {
+          await fetch(
+            `${API_URL}/${data.data[rowIdx].id}`,
+            getRequestOptions('PUT', data.data[rowIdx])
+          );
+          console.log('更新成功:', data.data[rowIdx]);
+        } catch (error) {
+          console.error('更新失败:', error);
+        }
+      });
+    }
+
+    // 删除评价指标
+    async function remove(id) {
+      try {
+        await fetch(`${API_URL}/${id}`, getRequestOptions('DELETE'));
+        data.data = data.data.filter((item) => item.id !== id);
+        initTable();
+      } catch (error) {
+        console.error('删除数据失败:', error);
+      }
+    }
+
+    // 创建新的评价指标
+    async function create() {
+      const method1 = document.getElementById('method1').value;
+      const titleCell = document.querySelector(
+        "tr:last-child [data-id='title']"
+      );
+      const optionsCell = document.querySelector(
+        "tr:last-child [data-id='options']"
+      );
+      const title = titleCell.textContent.trim();
+      let options = optionsCell.textContent.trim();
+
+      if (!title) {
+        alert('请输入指标名');
+        return;
+      }
+
+      options = options
+        ? options.split(',').map((option) => option.trim())
+        : [];
+      const newEvaluation = { name: method1, title, options };
+
+      try {
+        const response = await fetch(
+          API_URL,
+          getRequestOptions('POST', newEvaluation)
+        );
+        if (!response.ok) throw new Error('添加数据失败');
+        const newData = await response.json();
+
+        fetchData();
+      } catch (error) {
+        console.error('添加数据失败:', error);
+      }
+    }
+
+    // 初始化数据
+    const data = {
+      tableHeader: { 指标类: 'name', 指标名: 'title', 可选项: 'options' },
+      data: [],
+    };
+    fetchData();
+  </script>
+</html>

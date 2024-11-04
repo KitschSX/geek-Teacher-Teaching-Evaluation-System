@@ -49,9 +49,8 @@ document.addEventListener('DOMContentLoaded', function () {
         evaluations = data; // 存储评价指标以便提交
         data.forEach((evaluation) => {
           const evaluationHTML = useEvaluation(evaluation);
-          console.log('form', evaluationForm);
           evaluationForm.innerHTML += evaluationHTML;
-          console.log('form', stringToHTML(evaluationHTML), evaluationForm);
+          // console.log('form', stringToHTML(evaluationHTML), evaluationForm);
         });
       } else {
         console.log(data);
@@ -138,7 +137,6 @@ var stringToHTML = function (str) {
 
 // 根据评价指标生成相应的表单元素
 function useEvaluation(data) {
-  // console.log(data)
   if (data.name === 'input') {
     return `
         <div class="form-group">
@@ -203,7 +201,6 @@ function useEvaluation(data) {
   }
 }
 
-/* eslint-disable no-unused-vars */
 function deRequire(elClass) {
   const elements = document.getElementsByClassName(elClass);
   let atLeastOneChecked = Array.from(elements).some((el) => el.checked);
@@ -212,3 +209,5 @@ function deRequire(elClass) {
     el.required = !atLeastOneChecked; // 如果没有选中任何一个，则设置为必填
   });
 }
+
+window.deRequire = deRequire;

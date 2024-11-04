@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>登录密码修改</title>
+    <style>
+      button {
+        padding: 5px 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h2>登录密码修改</h2>
+    <div>旧密码：</div>
+    <input type="password" id="oldPwd" />
+    <div>新密码：</div>
+    <input type="password" id="newPwd" />
+    <button onclick="changePwd()">修改</button>
+
+    <script>
+      function changePwd() {
+        let oldPwd = document.getElementById('oldPwd').value;
+        let newPwd = document.getElementById('newPwd').value;
+        if (oldPwd === '' || newPwd === '') {
+          alert('请输入旧密码和新密码');
+          return;
+        }
+        let data = {
+          oldPwd: oldPwd,
+          newPwd: newPwd,
+        };
+
+        fetch('http://localhost:3000/api/admins/changePwd', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: localStorage.getItem('jwtToken'),
+          },
+          body: JSON.stringify(data),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.code === 200) {
+              alert('修改成功');
+            } else {
+              alert(data.msg);
+            }
+          })
+          .catch((error) => {
+            console.error('修改密码请求失败:', error);
+            alert('修改密码请求失败，请稍后重试。');
+          });
+      }
+    </script>
+  </body>
+</html>

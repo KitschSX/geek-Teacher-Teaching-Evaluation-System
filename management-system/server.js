@@ -2,13 +2,18 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const cors = require('cors')
+const path = require('path')
 const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const studentRoutes = require('./routes/studentRoutes');
 const teacherRoutes = require('./routes/teacherRoutes');
 const evaluationRoutes = require('./routes/evaluationRoutes');
 
-dotenv.config();
+const result = dotenv.config({
+    path: path.resolve(__dirname, './.env')
+});
+
+console.log('env', result)
 const app = express();
 const PORT = process.env.PORT || 3000;
 
